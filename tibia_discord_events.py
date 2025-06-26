@@ -2,9 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 import pytz
-import time
 
-WEBHOOK_URL = "YOUR_WEBHOOK_URL"  # <-- Replace this
+WEBHOOK_URL = "YOUR_WEBHOOK_URL"  # <-- Replace this with your Discord webhook URL
 
 def get_today_events():
     uk_tz = pytz.timezone('Europe/London')
@@ -71,18 +70,14 @@ def mark_ran_today():
         f.write(today)
 
 def main():
-    uk_tz = pytz.timezone('Europe/London')
-    while True:
-        now_uk = datetime.now(uk_tz)
-        if now_uk.hour == 10 and now_uk.minute == 0 and not already_ran_today():
-            events = get_today_events()
-            msg = f"**Events for today:**\n{events}"
-            post_to_discord(msg)
-            mark_ran_today()
-            print(f"Posted at {now_uk.strftime('%Y-%m-%d %H:%M:%S')}")
-            time.sleep(60)
-        else:
-            time.sleep(30)
+    if not already_ran_today():
+        events = get_today_events()
+        msg = f"**Events for today:**\n{events}"
+        post_to_discord(msg)
+        mark_ran_today()
+        print("Posted events.")
+    else:
+        print("Already ran today.")
 
 if __name__ == "__main__":
     main()
