@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 import time
 
-WEBHOOK_URL = "YOUR_WEBHOOK_URL"  # <-- Replace with your Discord webhook URL
+WEBHOOK_URL = "YOUR_WEBHOOK_URL"  # <-- Replace this
 
 def get_today_events():
     uk_tz = pytz.timezone('Europe/London')
@@ -56,19 +56,32 @@ def post_to_discord(message):
     data = {"content": message}
     requests.post(WEBHOOK_URL, json=data)
 
+def already_ran_today():
+    today = datetime.now(pytz.timezone('Europe/London')).strftime("%Y-%m-%d")
+    try:
+        with open("last_run.txt", "r") as f:
+            last_run = f.read().strip()
+        return last_run == today
+    except FileNotFoundError:
+        return False
+
+def mark_ran_today():
+    today = datetime.now(pytz.timezone('Europe/London')).strftime("%Y-%m-%d")
+    with open("last_run.txt", "w") as f:
+        f.write(today)
+
 def main():
     uk_tz = pytz.timezone('Europe/London')
     while True:
         now_uk = datetime.now(uk_tz)
-        if now_uk.hour == 10 and now_uk.minute == 0:
+        if now_uk.hour == 10 and now_uk.minute == 0 and not already_ran_today():
             events = get_today_events()
             msg = f"**Events for today:**\n{events}"
             post_to_discord(msg)
+            mark_ran_today()
             print(f"Posted at {now_uk.strftime('%Y-%m-%d %H:%M:%S')}")
-            # Sleep for a minute to avoid posting twice in the same minute
             time.sleep(60)
         else:
-            # Sleep for 30 seconds before checking again
             time.sleep(30)
 
 if __name__ == "__main__":
