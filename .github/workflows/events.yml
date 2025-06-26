@@ -1,0 +1,21 @@
+name: Tibia Event Notifier
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * *' # 10am UK time is 9am UTC (adjust as needed)
+
+jobs:
+  run-notifier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 pytz
+      - name: Run notifier
+        run: python tibia_discord_events.py
