@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pytz
 
-WEBHOOK_URL = "YOUR_WEBHOOK_URL"  # <-- Replace this with your Discord webhook URL
+WEBHOOK_URL = "https://discord.com/api/webhooks/1387871265028833441/9tzEU8A9TM2YvmkpzmkXNwFkqG4zQGo6wXvTYQEn5tqhA4TCAZ0yEiwnhLm4y3-MblJA"  # <-- Replace this with your Discord webhook URL
 
 def get_today_events():
     uk_tz = pytz.timezone('Europe/London')
